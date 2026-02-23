@@ -53,23 +53,23 @@ jobs:
           fetch-depth: 1
 
       - name: 准备 autoexec.ipxe
-        working-directory: ${{ env.IPXE_SRC_DIR }}/src
+        working-directory: ${{ env.AUTOEXEC_SRC_DIR }}
         run: |
           echo "当前工作目录: $(pwd)"
+          echo "列出当前目录内容:"
+          ls -la
+          
           echo "列出项目根目录内容:"
-          ls -la ../..
+          ls -la ..
           
-          echo "列出 ${{ env.AUTOEXEC_SRC_DIR }} 目录内容:"
-          ls -la ../../${{ env.AUTOEXEC_SRC_DIR }}
-          
-          CUSTOM_AUTOEXEC_PATH="../../${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
+          CUSTOM_AUTOEXEC_PATH="${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
-            echo "找到文件，正在复制..."
-            cp "${CUSTOM_AUTOEXEC_PATH}" ./${{ env.EMBED_FILENAME }}
+            echo "找到文件，正在复制到 iPXE 源码目录..."
+            cp "${CUSTOM_AUTOEXEC_PATH}" ../${{ env.IPXE_SRC_DIR }}/src/${{ env.EMBED_FILENAME }}
             echo "复制完成，验证目标文件:"
-            ls -la ./${{ env.EMBED_FILENAME }}
+            ls -la ../${{ env.IPXE_SRC_DIR }}/src/${{ env.EMBED_FILENAME }}
           else
             echo "错误: 未找到 autoexec.ipxe 在 '${CUSTOM_AUTOEXEC_PATH}'"
             exit 1
