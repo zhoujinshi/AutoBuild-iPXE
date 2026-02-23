@@ -11,15 +11,15 @@ on:
 jobs:
   build:
     name: 构建 / ${{ matrix.arch }} / ${{ matrix.target }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - arch: x86_64
-            target: pcbios
+            target: bios
             builder_arch: x86_64
-            output_dir: bin-x86_64-pcbios
+            output_dir: bin-x86_64-bios
 
     container:
       image: ghcr.io/ipxe/ipxe-builder-${{ matrix.builder_arch }}
@@ -44,21 +44,6 @@ jobs:
           repository: zhoujinshi/ipxe
           ref: master
           fetch-depth: 0
-
-      - name: 检查空间使用情况
-        run: |
-          echo "警告⚠"
-          echo -e "-------------- ------------CPU信息------------------------------------------\n"
-          echo "CPU物理数量:$(cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l)"
-          echo -e "CPU核心及版本信息：$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
-          echo "-------------------------------内存信息-------------------------------------------"
-          echo "已安装内存详细信息："
-          sudo lshw -short -C memory | grep GiB
-          echo -e "\n"
-          echo "-----------------------------硬盘信息---------------------------------------------"
-          echo -e  "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l) \n"
-          echo "硬盘详情："
-          df -Th
 
       - name: 检出 iPXE 源码
         uses: actions/checkout@master
