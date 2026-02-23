@@ -7,18 +7,7 @@ on:
         description: 'iPXE 仓库'
         required: true
         default: 'ipxe/ipxe'
-      ipxe_ref:
-        description: 'iPXE 仓库引用 (分支、标签或提交)'
-        required: true
-        default: 'master'
-      autoexec_repo:
-        description: '包含 autoexec.ipxe 的仓库 (留空则使用与 iPXE 相同的仓库)'
-        required: false
-        default: ''
-      autoexec_ref:
-        description: 'autoexec 仓库引用 (留空则使用与 iPXE 相同的引用)'
-        required: false
-        default: ''
+
       autoexec_path:
         description: 'autoexec.ipxe 在仓库中的路径'
         required: false
@@ -51,15 +40,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.ipxe_repo }}
-          ref: ${{ inputs.ipxe_ref }}
+          ref: master
           fetch-depth: 0
           path: ${{ env.IPXE_SRC_DIR }}
 
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.autoexec_repo || inputs.ipxe_repo }}
-          ref: ${{ inputs.autoexec_ref || inputs.ipxe_ref }}
+          repository: ${{ inputs.ipxe_repo }}
+          ref: master
           path: ${{ env.AUTOEXEC_SRC_DIR }}
           fetch-depth: 1
 
