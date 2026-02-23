@@ -99,19 +99,17 @@ jobs:
 
       - name: 生成 release tag
         id: tag
-        if: (inputs.UPLOAD_RELEASE == true) && !cancelled()
         run: |
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
           cat >> release.txt <<EOF
           1、本固件为自动编译
           2、发行版中只提供完整的固件
-          3、源码：${{ env.REPO_URL }}
-          -- Build by ${{ env.BUILD_USER }} @ with Github Action on $(date +"%Y.%m.%d-%H%M")
+          -- Build by Cnbbx @ with Github Action on $(date +"%Y.%m.%d-%H%M")
           🚀 Auto build | 自动编译
           EOF
 
-      - name: 上传固件到release
+      - name: 发布到 Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
