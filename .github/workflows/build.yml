@@ -90,7 +90,6 @@ jobs:
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
-        if: !cancelled()
         with:
           name: ipxe-${{ matrix.arch }}
           path: |
@@ -100,7 +99,6 @@ jobs:
 
       - name: 发布到 Release
         uses: softprops/action-gh-release@v2
-        if: !cancelled()
         with:
           files: |
             /workdir/undionly.kpxe
@@ -113,14 +111,12 @@ jobs:
 
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
-        if: !cancelled()
         with:
           retain_days: 0
           keep_minimum_runs: 3
 
       - name: 移除老的 Releases
         uses: dev-drprasad/delete-older-releases@master
-        if: !cancelled()
         with:
           keep_latest: 3
           delete_tags: true
