@@ -24,7 +24,7 @@ jobs:
 
     env:
       bindir: bin
-
+      
     steps:
       - name: 创建工作目录
         working-directory: /
