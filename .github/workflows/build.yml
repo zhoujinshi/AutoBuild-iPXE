@@ -41,6 +41,7 @@ jobs:
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
+          path: ${{ env.IPXE_SRC_DIR }}
 
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
@@ -48,19 +49,23 @@ jobs:
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
+          path: ${{ env.AUTOEXEC_SRC_DIR }}
 
       - name: 准备 autoexec.ipxe
         run: |
           echo "当前工作目录: $(pwd)"
+          tree -L 2
+          cd ../../
+          tree -L 2
           
           CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
-            cp "${CUSTOM_AUTOEXEC_PATH}" src/${{ inputs.autoexec_path }}
+            cp "${CUSTOM_AUTOEXEC_PATH}" ${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
-            ls -la src/${{ inputs.autoexec_path }}
+            ls -la ${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
           else
             echo "错误: 未找到 autoexec.ipxe 在 '${CUSTOM_AUTOEXEC_PATH}'"
             exit 1
