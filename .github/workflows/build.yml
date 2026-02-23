@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       autoexec_path:
-        description: 'autoexec.ipxe 在仓库中的路径'
+        description: '需要启动执行的脚本'
         required: false
         default: 'autoexec.ipxe'
 
@@ -96,16 +96,34 @@ jobs:
             ${{ env.bindir }}/*.pxe
             ${{ inputs.autoexec_path }}
 
+       - name: 发布到 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          working-directory: /workdir/ipxe-source/src
+          files: |
+            ${{ env.bindir }}/*.kpxe
+            ${{ env.bindir }}/*.pxe
+            ${{ inputs.autoexec_path }}
+          tag_name: ${{ matrix.arch }}
+          name: ${{ matrix.arch }}
+          draft: false
+          prerelease: false
+
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
         with:
-          retain_days: 1
+          retain_days: 0
           keep_minimum_runs: 3
 
-      - name: 移除老的 Releases
-        uses: dev-drprasad/delete-older-releases@master
+      - uses: sgpublic/delete-release-action@v1.1
         with:
-          keep_latest: 3
-          delete_tags: true
+          release-drop: true
+          release-keep-count: 2
+          release-drop-tag: true
+          pre-release-drop: true
+          pre-release-keep-count: -1
+          pre-release-drop-tag: true
+          draft-drop: true
+          draft-drop-count: -1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
