@@ -55,10 +55,14 @@ jobs:
       - name: 准备 autoexec.ipxe
         working-directory: ${{ env.IPXE_SRC_DIR }}/src
         run: |
-          echo "列出 ${{ env.AUTOEXEC_SRC_DIR }} 目录内容:"
-          ls -la ${{ env.AUTOEXEC_SRC_DIR }}
+          echo "当前工作目录: $(pwd)"
+          echo "列出项目根目录内容:"
+          ls -la ../..
           
-          CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
+          echo "列出 ${{ env.AUTOEXEC_SRC_DIR }} 目录内容:"
+          ls -la ../../${{ env.AUTOEXEC_SRC_DIR }}
+          
+          CUSTOM_AUTOEXEC_PATH="../../${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
