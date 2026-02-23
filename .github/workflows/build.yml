@@ -95,7 +95,7 @@ jobs:
             ${{ env.bindir }}/*.pxe
             ${{ inputs.autoexec_path }}
 
-       - name: 发布到 Release
+      - name: 发布到 Release
         uses: softprops/action-gh-release@v2
         with:
           working-directory: /workdir/ipxe-source/src
