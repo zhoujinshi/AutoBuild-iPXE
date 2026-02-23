@@ -38,49 +38,49 @@ jobs:
       - name: 创建工作目录
         working-directory: /
         run: |
-          mkdir -p /${{ env.IPXE_SRC_DIR }}
-          mkdir -p /${{ env.AUTOEXEC_SRC_DIR }}
+          sudo mkdir -p /workdir
+          sudo chown $USER:$GROUPS /workdir
           ls -la /
 
       - name: 检出 autoexec.ipxe
-        uses: actions/checkout@v4
+        uses: actions/checkout@master
         with:
-          working-directory: /${{ env.AUTOEXEC_SRC_DIR }}
+          working-directory: /workdir/${{ env.AUTOEXEC_SRC_DIR }}
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
 
       - name: 检出 iPXE 源码
-        uses: actions/checkout@v4
+        uses: actions/checkout@master
         with:
-          working-directory: /${{ env.IPXE_SRC_DIR }}
+          working-directory: /workdir/${{ env.IPXE_SRC_DIR }}
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 1
 
       - name: 准备 autoexec.ipxe
-        working-directory: /${{ env.AUTOEXEC_SRC_DIR }}
+        working-directory: /workdir/${{ env.AUTOEXEC_SRC_DIR }}
         run: |
-          cd /${{ env.IPXE_SRC_DIR }}
+          cd /workdir/${{ env.IPXE_SRC_DIR }}
           echo "当前工作目录: $(pwd)"
           ls -la
-          cd /${{ env.AUTOEXEC_SRC_DIR }}
+          cd /workdir/${{ env.AUTOEXEC_SRC_DIR }}
           echo "当前工作目录: $(pwd)"
           ls -la
-          echo "尝试访问文件: ${{ inputs.autoexec_path }}"
+          echo "尝试访问文件: /workdir/${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           
-          if [ -f "${{ inputs.autoexec_path }}" ]; then
+          if [ -f "/workdir/${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
-            cp "${{ inputs.autoexec_path }}" /${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
+            cp "/workdir/${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}" /workdir/${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
-            ls -la /${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
+            ls -la /workdir/${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
           else
-            echo "错误: 未找到 autoexec.ipxe 在 '${{ inputs.autoexec_path }}'"
+            echo "错误: 未找到 autoexec.ipxe 在 '/workdir/${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}'"
             exit 1
           fi
 
       - name: 构建 iPXE
-        working-directory: /${{ env.IPXE_SRC_DIR }}/src
+        working-directory: /workdir/${{ env.IPXE_SRC_DIR }}/src
         run: |
           echo "当前工作目录: $(pwd)"
           make clean
@@ -91,7 +91,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          working-directory: /${{ env.IPXE_SRC_DIR }}/src
+          working-directory: /workdir/${{ env.IPXE_SRC_DIR }}/src
           name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
           path: |
             ${{ matrix.output_dir }}/*.kpxe
