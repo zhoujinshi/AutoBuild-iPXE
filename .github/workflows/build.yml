@@ -33,7 +33,6 @@ jobs:
     env:
       IPXE_SRC_DIR: ipxe-source
       AUTOEXEC_SRC_DIR: autoexec-config
-      EMBED_FILENAME: autoexec.ipxe
 
     steps:
       - name: 检出 iPXE 源码
@@ -50,26 +49,21 @@ jobs:
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           path: ${{ env.AUTOEXEC_SRC_DIR }}
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: 准备 autoexec.ipxe
         working-directory: ${{ env.AUTOEXEC_SRC_DIR }}
         run: |
           echo "当前工作目录: $(pwd)"
-          echo "列出当前目录内容:"
-          ls -la
           
-          echo "列出项目根目录内容:"
-          ls -la ..
-          
-          CUSTOM_AUTOEXEC_PATH="${{ inputs.autoexec_path }}"
+          CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
-            cp "${CUSTOM_AUTOEXEC_PATH}" ../${{ env.IPXE_SRC_DIR }}/src/${{ env.EMBED_FILENAME }}
+            cp "${CUSTOM_AUTOEXEC_PATH}" ${{ env.IPXE_SRC_DIR }}/src/${{ autoexec_path }}
             echo "复制完成，验证目标文件:"
-            ls -la ../${{ env.IPXE_SRC_DIR }}/src/${{ env.EMBED_FILENAME }}
+            ls -la ../${{ env.IPXE_SRC_DIR }}/src/${{ autoexec_path }}
           else
             echo "错误: 未找到 autoexec.ipxe 在 '${CUSTOM_AUTOEXEC_PATH}'"
             exit 1
@@ -79,10 +73,9 @@ jobs:
         working-directory: ${{ env.IPXE_SRC_DIR }}/src
         run: |
           make clean
-          make EMBED=${{ env.EMBED_FILENAME }} \
+          make EMBED=${{ autoexec_path }} \
                ${{ matrix.output_dir }}/undionly.kpxe \
-               ${{ matrix.output_dir }}/ipxe.pxe \
-               ${{ matrix.output_dir }}/ipxe.iso
+               ${{ matrix.output_dir }}/ipxe.pxe
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
@@ -90,10 +83,5 @@ jobs:
           name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
           path: |
             ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.kpxe
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.rom
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.mrom
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.iso
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.dsk
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.lkrn
             ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.pxe
-            ${{ env.IPXE_SRC_DIR }}/src/${{ env.EMBED_FILENAME }}
+            ${{ env.IPXE_SRC_DIR }}/src/${{ autoexec_path }}
