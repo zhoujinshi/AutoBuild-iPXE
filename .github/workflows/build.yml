@@ -45,31 +45,32 @@ jobs:
       - name: 检出 iPXE 源码
         uses: actions/checkout@v4
         with:
-          working-directory: /
+          working-directory: /${{ env.IPXE_SRC_DIR }}
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
-          path: /${{ env.IPXE_SRC_DIR }}
 
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
         with:
-          working-directory: /
+          working-directory: /${{ env.AUTOEXEC_SRC_DIR }}
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
-          path: /${{ env.AUTOEXEC_SRC_DIR }}
 
       - name: 准备 autoexec.ipxe
         working-directory: /${{ env.AUTOEXEC_SRC_DIR }}
         run: |
+          cd /${{ env.IPXE_SRC_DIR }}
           echo "当前工作目录: $(pwd)"
-          echo "尝试访问文件: ${{ inputs.autoexec_path }}"
           ls -la
+          cd /${{ env.AUTOEXEC_SRC_DIR }}
+          echo "当前工作目录: $(pwd)"
+          ls -la
+          echo "尝试访问文件: ${{ inputs.autoexec_path }}"
           
           if [ -f "${{ inputs.autoexec_path }}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
-            mkdir -p /${{ env.IPXE_SRC_DIR }}/src
             cp "${{ inputs.autoexec_path }}" /${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
             ls -la /${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
