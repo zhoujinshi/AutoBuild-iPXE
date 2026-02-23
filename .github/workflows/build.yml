@@ -42,14 +42,6 @@ jobs:
           mkdir -p /${{ env.AUTOEXEC_SRC_DIR }}
           ls -la /
 
-      - name: 检出 iPXE 源码
-        uses: actions/checkout@v4
-        with:
-          working-directory: /${{ env.IPXE_SRC_DIR }}
-          repository: ${{ inputs.ipxe_repo }}
-          ref: master
-          fetch-depth: 0
-
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
         with:
@@ -57,6 +49,14 @@ jobs:
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
+
+      - name: 检出 iPXE 源码
+        uses: actions/checkout@v4
+        with:
+          working-directory: /${{ env.IPXE_SRC_DIR }}
+          repository: ${{ inputs.ipxe_repo }}
+          ref: master
+          fetch-depth: 1
 
       - name: 准备 autoexec.ipxe
         working-directory: /${{ env.AUTOEXEC_SRC_DIR }}
