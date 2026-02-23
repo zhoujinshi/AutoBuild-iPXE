@@ -52,16 +52,15 @@ jobs:
           fetch-depth: 0
 
       - name: 准备 autoexec.ipxe
-        working-directory: ${{ env.AUTOEXEC_SRC_DIR }}
         run: |
           echo "当前工作目录: $(pwd)"
           
-          CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
+          CUSTOM_AUTOEXEC_PATH="../../${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
-            cp "${CUSTOM_AUTOEXEC_PATH}" ${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
+            cp "${CUSTOM_AUTOEXEC_PATH}" src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
             ls -la ../${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
           else
