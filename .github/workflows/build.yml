@@ -97,17 +97,28 @@ jobs:
             /workdir/ipxe.pxe
             /workdir/${{ inputs.autoexec_path }}
 
-      - name: 发布到 Release
-        uses: softprops/action-gh-release@v2
+      - name: 生成 release tag
+        id: tag
+        if: (inputs.UPLOAD_RELEASE == true) && !cancelled()
+        run: |
+          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+          touch release.txt
+          cat >> release.txt <<EOF
+          1、本固件为自动编译
+          2、发行版中只提供完整的固件
+          3、源码：${{ env.REPO_URL }}
+          -- Build by ${{ env.BUILD_USER }} @ with Github Action on $(date +"%Y.%m.%d-%H%M")
+          🚀 Auto build | 自动编译
+          EOF
+
+      - name: 上传固件到release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: |
-            /workdir/undionly.kpxe
-            /workdir/ipxe.pxe
-            /workdir/${{ inputs.autoexec_path }}
-          tag_name: ${{ matrix.arch }}
-          name: ${{ matrix.arch }}
-          draft: false
-          prerelease: false
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          body_path: release.txt
+          files: /workdir/*
 
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
