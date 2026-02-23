@@ -55,22 +55,23 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           
-          CUSTOM_AUTOEXEC_PATH="../../${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
+          CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
             cp "${CUSTOM_AUTOEXEC_PATH}" src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
-            ls -la ../${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
+            ls -la src/${{ inputs.autoexec_path }}
           else
             echo "错误: 未找到 autoexec.ipxe 在 '${CUSTOM_AUTOEXEC_PATH}'"
             exit 1
           fi
 
       - name: 构建 iPXE
-        working-directory: ${{ env.IPXE_SRC_DIR }}/src
         run: |
+          echo "当前工作目录: $(pwd)"
+          cd src
           make clean
           make EMBED=${{ inputs.autoexec_path }} \
                ${{ matrix.output_dir }}/undionly.kpxe \
@@ -81,6 +82,6 @@ jobs:
         with:
           name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
           path: |
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.kpxe
-            ${{ env.IPXE_SRC_DIR }}/src/${{ matrix.output_dir }}/*.pxe
-            ${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
+            src/${{ matrix.output_dir }}/*.kpxe
+            src/${{ matrix.output_dir }}/*.pxe
+            src/${{ inputs.autoexec_path }}
