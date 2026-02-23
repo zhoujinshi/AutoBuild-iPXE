@@ -49,7 +49,7 @@ jobs:
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
-          path: ${{ env.IPXE_SRC_DIR }}
+          path: /${{ env.IPXE_SRC_DIR }}
 
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
-          path: ${{ env.AUTOEXEC_SRC_DIR }}
+          path: /${{ env.AUTOEXEC_SRC_DIR }}
 
       - name: 准备 autoexec.ipxe
         working-directory: /${{ env.AUTOEXEC_SRC_DIR }}
