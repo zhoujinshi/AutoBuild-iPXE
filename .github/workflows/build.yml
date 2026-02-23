@@ -35,6 +35,13 @@ jobs:
       AUTOEXEC_SRC_DIR: autoexec-config
 
     steps:
+      - name: 创建工作目录
+        working-directory: /
+        run: |
+          mkdir -p /${{ env.IPXE_SRC_DIR }}
+          mkdir -p /${{ env.AUTOEXEC_SRC_DIR }}
+          ls -la /
+
       - name: 检出 iPXE 源码
         uses: actions/checkout@v4
         with:
@@ -58,9 +65,11 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           echo "尝试访问文件: ${{ inputs.autoexec_path }}"
+          ls -la
           
           if [ -f "${{ inputs.autoexec_path }}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
+            mkdir -p /${{ env.IPXE_SRC_DIR }}/src
             cp "${{ inputs.autoexec_path }}" /${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
             ls -la /${{ env.IPXE_SRC_DIR }}/src/${{ inputs.autoexec_path }}
@@ -81,13 +90,13 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
           working-directory: /${{ env.IPXE_SRC_DIR }}/src
+          name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
           path: |
             ${{ matrix.output_dir }}/*.kpxe
             ${{ matrix.output_dir }}/*.pxe
             ${{ inputs.autoexec_path }}
-            
+
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
         with:
