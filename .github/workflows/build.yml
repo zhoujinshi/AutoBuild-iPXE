@@ -38,17 +38,17 @@ jobs:
           ls -la /
 
       - name: 检出 autoexec.ipxe
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
-          working-directory: /workdir/${{ env.AUTOEXEC_SRC_DIR }}
+          path: /workdir/${{ env.AUTOEXEC_SRC_DIR }}
           repository: zhoujinshi/ipxe
           ref: master
           fetch-depth: 0
 
       - name: 检出 iPXE 源码
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
-          working-directory: /workdir/${{ env.IPXE_SRC_DIR }}
+          path: /workdir/${{ env.IPXE_SRC_DIR }}
           repository: ipxe/ipxe
           ref: master
           fetch-depth: 0
