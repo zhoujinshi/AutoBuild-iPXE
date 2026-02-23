@@ -54,10 +54,10 @@ jobs:
       - name: 准备 autoexec.ipxe
         run: |
           echo "当前工作目录: $(pwd)"
-          tree -L 2
+          ls -hl
           cd ../../
-          tree -L 2
-          
+          echo "切换工作目录: $(pwd)"
+          ls -hl
           CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
           echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
           
