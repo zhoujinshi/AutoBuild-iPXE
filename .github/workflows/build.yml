@@ -111,12 +111,14 @@ jobs:
 
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
+        if: github.event_name == 'push'
         with:
           retain_days: 0
           keep_minimum_runs: 3
 
       - name: 移除老的 Releases
         uses: dev-drprasad/delete-older-releases@master
+        if: github.event_name == 'push'
         with:
           keep_latest: 3
           delete_tags: true
