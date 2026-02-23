@@ -23,8 +23,7 @@ jobs:
       options: --user root
 
     env:
-      bindir: >-
-        ${{ matrix.arch == 'i386' && 'bin' || 'bin-x86_64-pcbios' }}
+      bindir: bin
 
     steps:
       - name: 创建工作目录
