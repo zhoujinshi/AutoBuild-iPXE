@@ -52,18 +52,18 @@ jobs:
           df -Th
 
       - name: 检出 iPXE 源码
-        working-directory: /
         uses: actions/checkout@v4
         with:
+          working-directory: /
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
           path: ${{ env.IPXE_SRC_DIR }}
 
       - name: 检出 autoexec.ipxe
-        working-directory: /
         uses: actions/checkout@v4
         with:
+          working-directory: /
           repository: ${{ inputs.ipxe_repo }}
           ref: master
           fetch-depth: 0
@@ -95,10 +95,10 @@ jobs:
                ${{ matrix.output_dir }}/ipxe.pxe
 
       - name: 上传构建产物
-        working-directory: /${{ env.IPXE_SRC_DIR }}/src
         uses: actions/upload-artifact@v4
         with:
           name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
+          working-directory: /${{ env.IPXE_SRC_DIR }}/src
           path: |
             ${{ matrix.output_dir }}/*.kpxe
             ${{ matrix.output_dir }}/*.pxe
@@ -112,7 +112,6 @@ jobs:
 
       - name: 移除老的 Releases
         uses: dev-drprasad/delete-older-releases@master
-        if: (inputs.UPLOAD_RELEASE == true || inputs.UPLOAD_RELEASE == '') && !cancelled()
         with:
           keep_latest: 3
           delete_tags: true
