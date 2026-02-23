@@ -10,20 +10,21 @@ on:
 
 jobs:
   build:
-    name: 构建 / ${{ matrix.arch }} / ${{ matrix.target }}
+    name: 构建 / ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - arch: x86_64
-            target: bios
-            builder_arch: x86_64
-            output_dir: bin-x86_64-bios
 
     container:
-      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.builder_arch }}
+      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.arch }}
       options: --user root
+
+    env:
+      bindir: >-
+        ${{ matrix.arch == 'i386' && 'bin' || 'bin-x86_64-pcbios' }}
 
     steps:
       - name: 创建工作目录
@@ -82,17 +83,17 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           make EMBED=${{ inputs.autoexec_path }} \
-               ${{ matrix.output_dir }}/undionly.kpxe \
-               ${{ matrix.output_dir }}/ipxe.pxe
+               ${{ env.bindir }}/undionly.kpxe \
+               ${{ env.bindir }}/ipxe.pxe
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           working-directory: /workdir/ipxe-source/src
-          name: ipxe-${{ matrix.arch }}-${{ matrix.target }}
+          name: ipxe-${{ matrix.arch }}
           path: |
-            ${{ matrix.output_dir }}/*.kpxe
-            ${{ matrix.output_dir }}/*.pxe
+            ${{ env.bindir }}/*.kpxe
+            ${{ env.bindir }}/*.pxe
             ${{ inputs.autoexec_path }}
 
       - name: 移除老的 workflow runs
