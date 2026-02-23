@@ -82,8 +82,8 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           make EMBED=${{ inputs.autoexec_path }} \
-               ${{ env.bindir }}/undionly.kpxe \
-               ${{ env.bindir }}/ipxe.pxe
+               undionly.kpxe \
+               ipxe.pxe
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
@@ -91,8 +91,8 @@ jobs:
           working-directory: /workdir/ipxe-source/src
           name: ipxe-${{ matrix.arch }}
           path: |
-            ${{ env.bindir }}/*.kpxe
-            ${{ env.bindir }}/*.pxe
+            undionly.kpxe
+            ipxe.pxe
             ${{ inputs.autoexec_path }}
 
       - name: 发布到 Release
@@ -100,8 +100,8 @@ jobs:
         with:
           working-directory: /workdir/ipxe-source/src
           files: |
-            ${{ env.bindir }}/*.kpxe
-            ${{ env.bindir }}/*.pxe
+            undionly.kpxe
+            ipxe.pxe
             ${{ inputs.autoexec_path }}
           tag_name: ${{ matrix.arch }}
           name: ${{ matrix.arch }}
@@ -114,7 +114,8 @@ jobs:
           retain_days: 0
           keep_minimum_runs: 3
 
-      - uses: sgpublic/delete-release-action@v1.1
+      - name: 移除老的 Release
+        uses: sgpublic/delete-release-action@v1.1
         with:
           release-drop: true
           release-keep-count: 2
