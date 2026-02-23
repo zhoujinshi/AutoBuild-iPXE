@@ -12,13 +12,13 @@ on:
         required: true
         default: 'master'
       autoexec_repo:
-        description: '包含 autoexec.ipxe 的仓库'
-        required: true
-        default: 'ipxe/ipxe'
+        description: '包含 autoexec.ipxe 的仓库 (留空则使用与 iPXE 相同的仓库)'
+        required: false
+        default: ''
       autoexec_ref:
-        description: 'autoexec 仓库引用'
-        required: true
-        default: 'master'
+        description: 'autoexec 仓库引用 (留空则使用与 iPXE 相同的引用)'
+        required: false
+        default: ''
       autoexec_path:
         description: 'autoexec.ipxe 在仓库中的路径'
         required: false
@@ -58,17 +58,25 @@ jobs:
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.autoexec_repo }}
-          ref: ${{ inputs.autoexec_ref }}
+          repository: ${{ inputs.autoexec_repo || inputs.ipxe_repo }}
+          ref: ${{ inputs.autoexec_ref || inputs.ipxe_ref }}
           path: ${{ env.AUTOEXEC_SRC_DIR }}
           fetch-depth: 1
 
       - name: 准备 autoexec.ipxe
         working-directory: ${{ env.IPXE_SRC_DIR }}/src
         run: |
+          echo "列出 ${{ env.AUTOEXEC_SRC_DIR }} 目录内容:"
+          ls -la ${{ env.AUTOEXEC_SRC_DIR }}
+          
           CUSTOM_AUTOEXEC_PATH="${{ env.AUTOEXEC_SRC_DIR }}/${{ inputs.autoexec_path }}"
+          echo "尝试访问文件: ${CUSTOM_AUTOEXEC_PATH}"
+          
           if [ -f "${CUSTOM_AUTOEXEC_PATH}" ]; then
+            echo "找到文件，正在复制..."
             cp "${CUSTOM_AUTOEXEC_PATH}" ./${{ env.EMBED_FILENAME }}
+            echo "复制完成，验证目标文件:"
+            ls -la ./${{ env.EMBED_FILENAME }}
           else
             echo "错误: 未找到 autoexec.ipxe 在 '${CUSTOM_AUTOEXEC_PATH}'"
             exit 1
