@@ -109,15 +109,6 @@ jobs:
           🚀 Auto build | 自动编译
           EOF
 
-      - name: 发布到 Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          body_path: release.txt
-          files: /workdir/*
-
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
         with:
