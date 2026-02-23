@@ -82,11 +82,11 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           make ${{ env.bindir }}/undionly.kpxe EMBED=${{ inputs.autoexec_path }}
-          make ${{ env.bindir }}/ipxe.pxe EMBED=${{ inputs.autoexec_path }}
-          ls -lh
           cp ${{ env.bindir }}/undionly.kpxe .
+          make ${{ env.bindir }}/ipxe.pxe EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/ipxe.pxe .
-          ls -lh
+          echo "构建完成，验证文件:"
+          ls -lh undionly.kpxe ipxe.pxe ${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
@@ -97,6 +97,9 @@ jobs:
             undionly.kpxe
             ipxe.pxe
             ${{ inputs.autoexec_path }}
+          run: |
+            echo "当前工作目录: $(pwd)"
+            ls -la
 
       - name: 发布到 Release
         uses: softprops/action-gh-release@v2
@@ -110,6 +113,9 @@ jobs:
           name: ${{ matrix.arch }}
           draft: false
           prerelease: false
+          run: |
+            echo "当前工作目录: $(pwd)"
+            ls -la
 
       - name: 移除老的 workflow runs
         uses: zhoujinshi/delete-workflow-runs@main
