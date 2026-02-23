@@ -84,7 +84,7 @@ jobs:
           make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/undionly.kpxe /workdir/
           cp ${{ env.bindir }}/ipxe.pxe /workdir/
-          cp ${{ env.bindir }}/${{ inputs.autoexec_path }} /workdir/
+          cp ${{ inputs.autoexec_path }} /workdir/
           echo "构建完成，验证文件:"
           ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/${{ inputs.autoexec_path }}
 
