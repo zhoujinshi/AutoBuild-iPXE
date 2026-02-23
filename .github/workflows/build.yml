@@ -91,21 +91,19 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          working-directory: /workdir/
           name: ipxe-${{ matrix.arch }}
           path: |
-            undionly.kpxe
-            ipxe.pxe
-            ${{ inputs.autoexec_path }}
+            /workdir/undionly.kpxe
+            /workdir/ipxe.pxe
+            /workdir/${{ inputs.autoexec_path }}
 
       - name: 发布到 Release
         uses: softprops/action-gh-release@v2
         with:
-          working-directory: /workdir/
           files: |
-            undionly.kpxe
-            ipxe.pxe
-            ${{ inputs.autoexec_path }}
+            /workdir/undionly.kpxe
+            /workdir/ipxe.pxe
+            /workdir/${{ inputs.autoexec_path }}
           tag_name: ${{ matrix.arch }}
           name: ${{ matrix.arch }}
           draft: false
