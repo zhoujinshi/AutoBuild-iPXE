@@ -81,9 +81,12 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           make clean
-          make EMBED=${{ inputs.autoexec_path }} \
-               undionly.kpxe \
-               ipxe.pxe
+          make ${{ env.bindir }}/undionly.kpxe EMBED=${{ inputs.autoexec_path }}
+          make ${{ env.bindir }}/ipxe.pxe EMBED=${{ inputs.autoexec_path }}
+          ls -lh
+          cp ${{ env.bindir }}/undionly.kpxe .
+          cp ${{ env.bindir }}/ipxe.pxe .
+          ls -lh
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
