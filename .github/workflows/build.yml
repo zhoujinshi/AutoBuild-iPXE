@@ -23,7 +23,7 @@ jobs:
       options: --user root
 
     env:
-      bindir: bin
+      bindir: bin-${{ matrix.arch }}-efi
       
     steps:
       - name: 创建工作目录
@@ -46,7 +46,7 @@ jobs:
         with:
           path: ipxe-source
           repository: ipxe/ipxe
-          ref: sbsign
+          ref: master
           fetch-depth: 0
 
       - name: 复制代码到工作目录
@@ -94,23 +94,35 @@ jobs:
           grep -A 2 "CONSOLE_CMD" config/general.h
 
           # 开始编译
-          make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe ${{ env.bindir }}/ipxe.usb EMBED=${{ inputs.autoexec_path }}
-          cp ${{ env.bindir }}/undionly.kpxe /workdir/
-          cp ${{ env.bindir }}/ipxe.pxe /workdir/
+          make ${{ env.bindir }}/ipxe.efi \
+               ${{ env.bindir }}/ipxe.iso \
+               ${{ env.bindir }}/ipxe.usb \
+               ${{ env.bindir }}/ipxe-legacy.efi \
+               ${{ env.bindir }}/snponly.efi \
+               ${{ env.bindir }}/errors \
+               EMBED=${{ inputs.autoexec_path }}
+          cp ${{ env.bindir }}/ipxe.efi /workdir/
+          cp ${{ env.bindir }}/ipxe.iso /workdir/
           cp ${{ env.bindir }}/ipxe.usb /workdir/
+          cp ${{ env.bindir }}/ipxe-legacy.efi /workdir/
+          cp ${{ env.bindir }}/snponly.efi /workdir/
           cp ${{ inputs.autoexec_path }} /workdir/
           
           echo "构建完成，验证文件:"
-          ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/ipxe.usb /workdir/${{ inputs.autoexec_path }}
+          ls -lh /workdir/ipxe.efi /workdir/ipxe.iso \
+                /workdir/ipxe.usb /workdir/ipxe-legacy.efi \
+                /workdir/snponly.efi /workdir/${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: ipxe-${{ matrix.arch }}
           path: |
-            /workdir/undionly.kpxe
-            /workdir/ipxe.pxe
+            /workdir/ipxe.efi
+            /workdir/ipxe.iso
             /workdir/ipxe.usb
+            /workdir/ipxe-legacy.efi
+            /workdir/snponly.efi
             /workdir/${{ inputs.autoexec_path }}
 
       - name: 生成 release tag
