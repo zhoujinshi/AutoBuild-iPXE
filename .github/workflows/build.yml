@@ -85,17 +85,16 @@ jobs:
           # Console Background and Console Custom resolution support
           sed -i 's/\/\/#define\ IMAGE_PNG/#define\ IMAGE_PNG/' config/general.h
           sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
-          sed -i 's/\/\/#define\tCONSOLE_FRAMEBUFFER/#define\tCONSOLE_FRAMEBUFFER/' config/console.h
           
           # NFS protocol support
-          sed -i 's/#undef\tDOWNLOAD_PROTO_NFS/#define\tDOWNLOAD_PROTO_NFS/' config/general.h
+          sed -i 's/\/\/#define\ DOWNLOAD_PROTO_NFS/#define\ DOWNLOAD_PROTO_NFS/' config/general.h
           
           # ping cmd support
           sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
           
           # poweroff and reboot cmd support
           sed -i 's/\/\/#define\ REBOOT_CMD/#define\ REBOOT_CMD/' config/general.h
-          sed -i 's/\/\/#define\ POWEROFF/#define\ POWEROFF/' config/general.h
+          sed -i 's/\/\/#define\ POWEROFF_CMD/#define\ POWEROFF_CMD/' config/general.h
           
           # params cmd support （开启他，可以传参 platform ${builtin/platform} 的 pcbios 和 efi 参数值）
           sed -i 's/\/\/#define\ PARAM_CMD/#define\ PARAM_CMD/' config/general.h
