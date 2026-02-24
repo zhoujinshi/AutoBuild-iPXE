@@ -84,6 +84,7 @@ jobs:
           
           # ping picture support
           sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
+          sed -i '/\/\/\s*#undef\s*CONSOLE_CMD/d' config/general.h
           
           # NFS protocol support
           sed -i 's/\/\/#define\ DOWNLOAD_PROTO_NFS/#define\ DOWNLOAD_PROTO_NFS/' config/general.h
