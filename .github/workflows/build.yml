@@ -81,6 +81,35 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           make clean
+          
+          # Console Background and Console Custom resolution support
+          sed -i 's/\/\/#define\ IMAGE_PNG/#define\ IMAGE_PNG/' config/general.h
+          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
+          sed -i 's/\/\/#define\tCONSOLE_FRAMEBUFFER/#define\tCONSOLE_FRAMEBUFFER/' config/console.h
+          
+          # NFS protocol support
+          sed -i 's/#undef\tDOWNLOAD_PROTO_NFS/#define\tDOWNLOAD_PROTO_NFS/' config/general.h
+          
+          # ping cmd support
+          sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
+          
+          # poweroff and reboot cmd support
+          sed -i 's/\/\/#define\ REBOOT_CMD/#define\ REBOOT_CMD/' config/general.h
+          sed -i 's/\/\/#define\ POWEROFF/#define\ POWEROFF/' config/general.h
+          
+          # params cmd support （开启他，可以传参 platform ${builtin/platform} 的 pcbios 和 efi 参数值）
+          sed -i 's/\/\/#define\ PARAM_CMD/#define\ PARAM_CMD/' config/general.h
+
+          # 替换第195-197行的错误返回逻辑为日志输出
+          sed -i '195,197c\/* Allow start even if net device is currently claimed by iPXE *\/\nif ( efi_snp_claimed ) {\n\tDBGC ( snpdev, "SNDEV %p allowing start while claimed\\n",\n\t      snpdev );\n}' interface/efi/efi_snp.c
+          
+          # 替换第247-250行的错误返回逻辑为日志+返回0
+          sed -i '247,250c\/* Do nothing if net device is currently claimed for use by\n * iPXE. Do not return an error, because this will cause\n * MmpDxe et al to fail to install the relevant child handles\n * and to leave behind a partially initialised device handle\n * that can cause a later system crash.\n *\/\nif ( efi_snp_claimed ) {\n\tDBGC ( snpdev, "SNDEV %p ignoring initialization while "\n\t      "claimed\\n", snpdev );\n\treturn 0;\n}' interface/efi/efi_snp.c
+          
+          # 理多余的 err_claimed 标签
+          sed -i '/err_claimed:/d' interface/efi/efi_snp.c
+          
+          # 开始编译
           make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/undionly.kpxe /workdir/
           cp ${{ env.bindir }}/ipxe.pxe /workdir/
