@@ -87,6 +87,10 @@ jobs:
           
           # ping cmd support
           sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
+
+          # 开启图片
+          sed -i 's/#undef CONSOLE_CMD/\/\* #undef CONSOLE_CMD \*\//; s/#undef CERT_CMD/\/\* #undef CERT_CMD \*\//' src/config/general.h
+          grep -A 2 "CONSOLE_CMD" src/config/general.h
           
           # 开始编译
           make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe ${{ env.bindir }}/ipxe.usb EMBED=${{ inputs.autoexec_path }}
@@ -98,6 +102,7 @@ jobs:
           ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/ipxe.usb /workdir/${{ inputs.autoexec_path }}
           
           echo "当前工作目录: $(pwd)"
+          ls -la
           ls -la
 
       - name: 上传构建产物
