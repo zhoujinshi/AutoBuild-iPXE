@@ -96,6 +96,9 @@ jobs:
           cp ${{ inputs.autoexec_path }} /workdir/
           echo "构建完成，验证文件:"
           ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/ipxe.usb /workdir/${{ inputs.autoexec_path }}
+          
+          echo "当前工作目录: $(pwd)"
+          ls -la
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
