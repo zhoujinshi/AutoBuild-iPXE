@@ -96,36 +96,36 @@ jobs:
           grep -A 2 "CONSOLE_CMD" config/general.h
 
           # 开始编译
-          make ${{ env.bindir }}/ipxe.efi \
+          make ${{ env.bindir }}/10ec8139.rom \
+               ${{ env.bindir }}/8086100e.mrom \
+               ${{ env.bindir }}/ipxe.dsk \
                ${{ env.bindir }}/ipxe.iso \
+               ${{ env.bindir }}/ipxe.lkrn \
+               ${{ env.bindir }}/ipxe.pxe \
                ${{ env.bindir }}/ipxe.usb \
-               ${{ env.bindir }}/ipxe-legacy.efi \
-               ${{ env.bindir }}/snponly.efi \
+               ${{ env.bindir }}/ipxe-legacy.lkrn \
+               ${{ env.bindir }}/ipxe-legacy.pxe \
+               ${{ env.bindir }}/undionly.kpxe \
                ${{ env.bindir }}/errors \
                EMBED=${{ inputs.autoexec_path }}
-          cp ${{ env.bindir }}/ipxe.efi /workdir/
-          cp ${{ env.bindir }}/ipxe.iso /workdir/
-          cp ${{ env.bindir }}/ipxe.usb /workdir/
-          cp ${{ env.bindir }}/ipxe-legacy.efi /workdir/
-          cp ${{ env.bindir }}/snponly.efi /workdir/
-          cp ${{ inputs.autoexec_path }} /workdir/
-          
-          echo "构建完成，验证文件:"
-          ls -lh /workdir/ipxe.efi /workdir/ipxe.iso \
-                /workdir/ipxe.usb /workdir/ipxe-legacy.efi \
-                /workdir/snponly.efi /workdir/${{ inputs.autoexec_path }}
+          cp ${{ env.bindir }}/10ec8139.rom /workdir/bin/${{ matrix.arch }}-10ec8139.rom
+          cp ${{ env.bindir }}/8086100e.mrom /workdir/bin/${{ matrix.arch }}-8086100e.mrom
+          cp ${{ env.bindir }}/ipxe.dsk /workdir/bin/${{ matrix.arch }}-ipxe.dsk
+          cp ${{ env.bindir }}/ipxe.iso /workdir/bin/${{ matrix.arch }}-ipxe.iso
+          cp ${{ env.bindir }}/ipxe.lkrn /workdir/bin/${{ matrix.arch }}-ipxe.lkrn
+          cp ${{ env.bindir }}/ipxe.pxe /workdir/bin/${{ matrix.arch }}-ipxe.pxe
+          cp ${{ env.bindir }}/ipxe.usb /workdir/bin/${{ matrix.arch }}-ipxe.usb
+          cp ${{ env.bindir }}/ipxe-legacy.lkrn /workdir/bin/${{ matrix.arch }}-ipxe-legacy.lkrn
+          cp ${{ env.bindir }}/ipxe-legacy.pxe /workdir/bin/${{ matrix.arch }}-ipxe-legacy.pxe
+          cp ${{ env.bindir }}/undionly.kpxe /workdir/bin/${{ matrix.arch }}-undionly.kpxe
+          cp ${{ inputs.autoexec_path }} /workdir/bin/${{ matrix.arch }}-${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: ipxe-${{ matrix.arch }}
           path: |
-            /workdir/ipxe.efi
-            /workdir/ipxe.iso
-            /workdir/ipxe.usb
-            /workdir/ipxe-legacy.efi
-            /workdir/snponly.efi
-            /workdir/${{ inputs.autoexec_path }}
+            /workdir/bin/*
 
       - name: 生成 release tag
         id: tag
