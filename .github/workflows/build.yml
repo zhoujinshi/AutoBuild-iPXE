@@ -105,6 +105,7 @@ jobs:
           cp ${{ env.bindir }}/undionly.kpxe /workdir/
           cp ${{ env.bindir }}/ipxe.pxe /workdir/
           cp ${{ inputs.autoexec_path }} /workdir/
+          cp config/general.h /workdir/
           echo "构建完成，验证文件:"
           ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/${{ inputs.autoexec_path }}
 
@@ -116,6 +117,7 @@ jobs:
             /workdir/undionly.kpxe
             /workdir/ipxe.pxe
             /workdir/${{ inputs.autoexec_path }}
+            /workdir/general.h
 
       - name: 生成 release tag
         id: tag
