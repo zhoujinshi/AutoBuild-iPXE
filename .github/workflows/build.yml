@@ -33,6 +33,8 @@ jobs:
         run: |
           sudo mkdir -p /workdir
           sudo chown $USER:$GROUPS /workdir
+          sudo mkdir -p /workdir/bin
+          sudo chown $USER:$GROUPS /workdir/bin
           ls -la /
 
       - name: 检出 autoexec.ipxe
