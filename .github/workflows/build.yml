@@ -16,6 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - arch: i386
           - arch: x86_64
 
     container:
@@ -23,7 +24,8 @@ jobs:
       options: --user root
 
     env:
-      bindir: bin-${{ matrix.arch }}-efi
+      bindir: >-
+        ${{ matrix.arch == 'i386' && 'bin' || 'bin-x86_64-pcbios' }}
       
     steps:
       - name: 创建工作目录
