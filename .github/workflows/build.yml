@@ -46,7 +46,7 @@ jobs:
         with:
           path: ipxe-source
           repository: ipxe/ipxe
-          ref: v1.21.1
+          ref: master
           fetch-depth: 0
 
       - name: 复制代码到工作目录
