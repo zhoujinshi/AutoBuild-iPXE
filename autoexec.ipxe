@@ -1,3 +1,4 @@
 #!ipxe
 dhcp
-chain --autofree http://${next-server}/scripts/menu.ipxe || chain --autofree tftp://${next-server}/scripts/menu.ipxe
+chain --autofree http://${next-server}/menu.ipxe || chain --autofree tftp://${next-server}/menu.ipxe
+
