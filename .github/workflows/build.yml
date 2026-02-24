@@ -89,8 +89,8 @@ jobs:
           sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
 
           # 开启图片
-          sed -i 's/#undef CONSOLE_CMD/\/\* #undef CONSOLE_CMD \*\//; s/#undef CERT_CMD/\/\* #undef CERT_CMD \*\//' src/config/general.h
-          grep -A 2 "CONSOLE_CMD" src/config/general.h
+          sed -i 's/#undef CONSOLE_CMD/\/\* #undef CONSOLE_CMD \*\//; s/#undef CERT_CMD/\/\* #undef CERT_CMD \*\//' config/general.h
+          grep -A 2 "CONSOLE_CMD" config/general.h
           
           # 开始编译
           make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe ${{ env.bindir }}/ipxe.usb EMBED=${{ inputs.autoexec_path }}
