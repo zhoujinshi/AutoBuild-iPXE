@@ -89,13 +89,13 @@ jobs:
           sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
           
           # 开始编译
-          make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe EMBED=${{ inputs.autoexec_path }}
+          make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe ${{ env.bindir }}/ipxe.usb EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/undionly.kpxe /workdir/
           cp ${{ env.bindir }}/ipxe.pxe /workdir/
+          cp ${{ env.bindir }}/ipxe.usb /workdir/
           cp ${{ inputs.autoexec_path }} /workdir/
-          cp config/general.h /workdir/
           echo "构建完成，验证文件:"
-          ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/${{ inputs.autoexec_path }}
+          ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/ipxe.usb /workdir/${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
@@ -104,8 +104,8 @@ jobs:
           path: |
             /workdir/undionly.kpxe
             /workdir/ipxe.pxe
+            /workdir/ipxe.usb
             /workdir/${{ inputs.autoexec_path }}
-            /workdir/general.h
 
       - name: 生成 release tag
         id: tag
