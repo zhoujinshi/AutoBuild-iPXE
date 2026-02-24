@@ -46,7 +46,7 @@ jobs:
         with:
           path: ipxe-source
           repository: ipxe/ipxe
-          ref: master
+          ref: v1.21.1
           fetch-depth: 0
 
       - name: 复制代码到工作目录
@@ -82,16 +82,21 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           
+          # ping picture support
+          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
+          
           # NFS protocol support
           sed -i 's/\/\/#define\ DOWNLOAD_PROTO_NFS/#define\ DOWNLOAD_PROTO_NFS/' config/general.h
           
           # ping cmd support
           sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
+          sed -i 's/\/\/#define\ IPSTAT_CMD/#define\ IPSTAT_CMD/' config/general.h
+          sed -i 's/\/\/#define\ PARAM_CMD/#define\ PARAM_CMD/' config/general.h
+          sed -i 's/\/\/#undef\tSANBOOT_PROTO_ISCSI/#define\tSANBOOT_PROTO_ISCSI/' config/general.h
+          sed -i 's/\/\/#undef\tSANBOOT_PROTO_HTTP/#define\tSANBOOT_PROTO_HTTP/' config/general.h
+          sed -i 's/\/\/#define\ REBOOT_CMD/#define\ REBOOT_CMD/' config/general.h
+          sed -i 's/\/\/#define\ POWEROFF_CMD/#define\ POWEROFF_CMD/' config/general.h
 
-          # 开启图片
-          sed -i 's/#undef CONSOLE_CMD/\/\* #undef CONSOLE_CMD \*\//; s/#undef CERT_CMD/\/\* #undef CERT_CMD \*\//' config/general.h
-          grep -A 2 "CONSOLE_CMD" config/general.h
-          
           # 开始编译
           make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe ${{ env.bindir }}/ipxe.usb EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/undionly.kpxe /workdir/
