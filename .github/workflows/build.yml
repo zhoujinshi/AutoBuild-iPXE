@@ -82,21 +82,16 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           
-          # ping picture support
-          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
-          sed -i '/\/\/\#undef\ CONSOLE_CMD/d' config/general.h
-          
           # NFS protocol support
           sed -i 's/\/\/#define\ DOWNLOAD_PROTO_NFS/#define\ DOWNLOAD_PROTO_NFS/' config/general.h
           
           # ping cmd support
           sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
           sed -i 's/\/\/#define\ IPSTAT_CMD/#define\ IPSTAT_CMD/' config/general.h
-          sed -i 's/\/\/#define\ PARAM_CMD/#define\ PARAM_CMD/' config/general.h
-          sed -i 's/\/\/#undef\tSANBOOT_PROTO_ISCSI/#define\tSANBOOT_PROTO_ISCSI/' config/general.h
-          sed -i 's/\/\/#undef\tSANBOOT_PROTO_HTTP/#define\tSANBOOT_PROTO_HTTP/' config/general.h
-          sed -i 's/\/\/#define\ REBOOT_CMD/#define\ REBOOT_CMD/' config/general.h
-          sed -i 's/\/\/#define\ POWEROFF_CMD/#define\ POWEROFF_CMD/' config/general.h
+
+          # 开启图片
+          sed -i 's/#undef CONSOLE_CMD/\/\* #undef CONSOLE_CMD \*\//; s/#undef CERT_CMD/\/\* #undef CERT_CMD \*\//' config/general.h
+          grep -A 2 "CONSOLE_CMD" config/general.h
 
           # 开始编译
           make ${{ env.bindir }}/undionly.kpxe ${{ env.bindir }}/ipxe.pxe ${{ env.bindir }}/ipxe.usb EMBED=${{ inputs.autoexec_path }}
@@ -104,12 +99,9 @@ jobs:
           cp ${{ env.bindir }}/ipxe.pxe /workdir/
           cp ${{ env.bindir }}/ipxe.usb /workdir/
           cp ${{ inputs.autoexec_path }} /workdir/
+          
           echo "构建完成，验证文件:"
           ls -lh /workdir/undionly.kpxe /workdir/ipxe.pxe /workdir/ipxe.usb /workdir/${{ inputs.autoexec_path }}
-          
-          echo "当前工作目录: $(pwd)"
-          ls -la
-          ls -la bin
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
