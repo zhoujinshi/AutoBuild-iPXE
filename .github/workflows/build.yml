@@ -20,7 +20,7 @@ jobs:
           - arch: x86_64
 
     container:
-      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.arch }}
+      image: ghcr.io/netbootxyz/builder:latest
       options: --user root
 
     env:
