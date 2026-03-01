@@ -49,7 +49,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ipxe-source
-          repository: ipxe/ipxe
+          repository: netbootxyz/ipxe
           ref: master
           fetch-depth: 0
 
@@ -86,17 +86,6 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           
-          # NFS protocol support
-          sed -i 's/\/\/#define\ DOWNLOAD_PROTO_NFS/#define\ DOWNLOAD_PROTO_NFS/' config/general.h
-          
-          # ping cmd support
-          sed -i 's/\/\/#define\ PING_CMD/#define\ PING_CMD/' config/general.h
-          sed -i 's/\/\/#define\ IPSTAT_CMD/#define\ IPSTAT_CMD/' config/general.h
-
-          # 开启图片
-          sed -i 's/#undef CONSOLE_CMD/\/\* #undef CONSOLE_CMD \*\//; s/#undef CERT_CMD/\/\* #undef CERT_CMD \*\//' config/general.h
-          grep -A 2 "CONSOLE_CMD" config/general.h
-
           # 开始编译
           make ${{ env.bindir }}/10ec8139.rom \
                ${{ env.bindir }}/8086100e.mrom \
