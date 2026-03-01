@@ -49,8 +49,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ipxe-source
-          repository: qianjunakasumi/ipxe
-          ref: tachi
+          repository: ipxe/ipxe
+          ref: acstest
           fetch-depth: 0
 
       - name: 复制代码到工作目录
@@ -85,7 +85,10 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           make clean
-
+          
+          # 开启CONSOLE_CMD命令
+          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
+          
           # 开始编译
           make ${{ env.bindir }}/ipxe.dsk \
                ${{ env.bindir }}/ipxe.iso \
