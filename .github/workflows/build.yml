@@ -103,6 +103,7 @@ jobs:
                ${{ env.bindir }}/ipxe.lkrn \
                ${{ env.bindir }}/ipxe.pxe \
                ${{ env.bindir }}/ipxe.usb \
+               
                ${{ env.bindir }}/undionly.kpxe \
                ${{ env.bindir }}/errors \
                TRUST=ca.crt \

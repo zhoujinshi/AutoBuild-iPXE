@@ -6,10 +6,12 @@
 
 ## 功能特性
 
-- 支持从指定的 iPXE 仓库和分支/标签/提交构建
-- 支持从指定的仓库获取自定义的 `autoexec.ipxe` 脚本
-- 构建多种格式的 iPXE 固件：`undionly.kpxe`、`ipxe.pxe`、`ipxe.iso` 等
-- 自动上传构建产物作为 GitHub Actions  artifacts
+- 从官方 iPXE 仓库（`ipxe/ipxe`）构建
+- 从当前仓库获取自定义的 `autoexec.ipxe` 脚本和 `ca.crt` 证书文件
+- 构建多种格式的 iPXE 固件：`undionly.kpxe`、`ipxe.pxe`、`ipxe.iso`、`ipxe.dsk`、`ipxe.lkrn`、`ipxe.usb` 等
+- 支持构建 i386 和 x86_64 两种架构的固件
+- 自动上传构建产物作为 GitHub Actions artifacts
+- 自动生成带时间戳的 release tag
 
 ## 使用方法
 
@@ -19,34 +21,50 @@
 2. 选择 "构建 iPXE 并嵌入自动执行脚本" 工作流
 3. 点击 "Run workflow" 按钮
 4. 填写以下参数：
-   - `ipxe_repo`: 要使用的 iPXE 仓库（默认：`ipxe/ipxe`）
-   - `ipxe_ref`: iPXE 仓库的分支、标签或提交（默认：`master`）
-   - `autoexec_repo`: 包含 `autoexec.ipxe` 的仓库（默认：`ipxe/ipxe`）
-   - `autoexec_ref`: autoexec 仓库的分支、标签或提交（默认：`master`）
-   - `autoexec_path`: `autoexec.ipxe` 在仓库中的路径（默认：`autoexec.ipxe`）
+   - `autoexec_path`: 需要启动执行的脚本（默认：`autoexec.ipxe`）
 5. 点击 "Run workflow" 开始构建
 
 ### 构建产物
 
 构建完成后，工作流会上传以下构建产物：
 
-- `undionly.kpxe`: 通用网络启动固件
-- `ipxe.pxe`: PXE 格式固件
-- `ipxe.iso`: ISO 格式固件
-- 以及其他可能的固件格式
-- 嵌入的 `autoexec.ipxe` 脚本
+- `{arch}-undionly.kpxe`: 通用网络启动固件
+- `{arch}-ipxe.pxe`: PXE 格式固件
+- `{arch}-ipxe.iso`: ISO 格式固件
+- `{arch}-ipxe.dsk`: 磁盘格式固件
+- `{arch}-ipxe.lkrn`: Linux 内核格式固件
+- `{arch}-ipxe.usb`: USB 格式固件
+- `{arch}-autoexec.ipxe`: 嵌入的自动执行脚本
+
+其中 `{arch}` 为架构名称，包括 `i386` 和 `x86_64`。
 
 ## 工作流配置
 
-工作流配置文件位于 `.github/workflows/build-ipxe.yml`，您可以根据需要修改配置。
+工作流配置文件位于 `.github/workflows/build.yml`，您可以根据需要修改配置。
 
 ### 支持的架构
 
-目前工作流默认只构建 x86_64 架构的固件，如果需要构建其他架构，可以修改工作流文件中的 `matrix` 配置。
+工作流支持构建以下架构的固件：
+- `i386`：32位 x86 架构
+- `x86_64`：64位 x86 架构
 
-## 示例 `menu.ipxe`
+## 项目结构
 
-以下是一个简单的 `menu.ipxe` 示例：
+项目包含以下目录和文件：
+
+- `.github/workflows/`：GitHub Actions 工作流配置
+  - `build.yml`：构建工作流配置文件
+- `img/`：存放项目相关图片资源
+  - `pic.png`：项目图片
+- `local/`：本地配置文件目录
+  - `colour.h`、`console.h`、`crypto.h`、`general.h`、`general.h.efi`：iPXE 本地配置文件
+- `autoexec.ipxe`：自动执行脚本
+- `ca.crt`：证书文件
+- `README.md`：项目说明文档
+
+## 示例 `autoexec.ipxe`
+
+以下是一个简单的 `autoexec.ipxe` 示例：
 
 ```ipxe
 #!ipxe
@@ -84,7 +102,7 @@ echo 启动完成！
 
 ## 注意事项
 
-- 确保 `autoexec_repo` 和 `autoexec_path` 参数正确，否则构建会失败
+- 确保 `autoexec.ipxe` 和 `ca.crt` 文件存在于项目根目录，否则构建会失败
 - 构建过程可能需要几分钟时间，请耐心等待
 - 如果构建失败，请检查工作流日志以了解详细错误信息
 
