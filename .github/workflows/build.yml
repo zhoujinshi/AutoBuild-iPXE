@@ -94,7 +94,6 @@ jobs:
                ${{ env.bindir }}/ipxe.lkrn \
                ${{ env.bindir }}/ipxe.pxe \
                ${{ env.bindir }}/ipxe.usb \
-               ${{ env.bindir }}/ipxe-legacy.pxe \
                ${{ env.bindir }}/undionly.kpxe \
                ${{ env.bindir }}/errors \
                EMBED=${{ inputs.autoexec_path }}
@@ -105,7 +104,6 @@ jobs:
           cp ${{ env.bindir }}/ipxe.lkrn /workdir/bin/${{ matrix.arch }}-ipxe.lkrn
           cp ${{ env.bindir }}/ipxe.pxe /workdir/bin/${{ matrix.arch }}-ipxe.pxe
           cp ${{ env.bindir }}/ipxe.usb /workdir/bin/${{ matrix.arch }}-ipxe.usb
-          cp ${{ env.bindir }}/ipxe-legacy.pxe /workdir/bin/${{ matrix.arch }}-ipxe-legacy.pxe
           cp ${{ env.bindir }}/undionly.kpxe /workdir/bin/${{ matrix.arch }}-undionly.kpxe
           cp ${{ inputs.autoexec_path }} /workdir/bin/${{ matrix.arch }}-${{ inputs.autoexec_path }}
 
