@@ -20,7 +20,7 @@ jobs:
           - arch: x86_64
 
     container:
-      image: ghcr.io/netbootxyz/builder:latest
+      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.arch }}
       options: --user root
 
     env:
@@ -31,10 +31,10 @@ jobs:
       - name: 创建工作目录
         working-directory: /
         run: |
-          mkdir -p /workdir
-          chown $USER:$GROUPS /workdir
-          mkdir -p /workdir/bin
-          chown $USER:$GROUPS /workdir/bin
+          sudo mkdir -p /workdir
+          sudo chown $USER:$GROUPS /workdir
+          sudo mkdir -p /workdir/bin
+          sudo chown $USER:$GROUPS /workdir/bin
           ls -la /
 
       - name: 检出 autoexec.ipxe
@@ -85,26 +85,23 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           make clean
-          
-          # 开启CONSOLE_CMD命令
-          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
-          
+
           # 开始编译
-          make ${{ env.bindir }}/10ec8139.rom \
-               ${{ env.bindir }}/8086100e.mrom \
-               ${{ env.bindir }}/ipxe.dsk \
+          make ${{ env.bindir }}/ipxe.dsk \
                ${{ env.bindir }}/ipxe.iso \
                ${{ env.bindir }}/ipxe.lkrn \
                ${{ env.bindir }}/ipxe.pxe \
                ${{ env.bindir }}/ipxe.usb \
                ${{ env.bindir }}/undionly.kpxe \
-               ${{ env.bindir }}/errors
+               ${{ env.bindir }}/errors \
+               EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/ipxe.dsk /workdir/bin/${{ matrix.arch }}-ipxe.dsk
           cp ${{ env.bindir }}/ipxe.iso /workdir/bin/${{ matrix.arch }}-ipxe.iso
           cp ${{ env.bindir }}/ipxe.lkrn /workdir/bin/${{ matrix.arch }}-ipxe.lkrn
           cp ${{ env.bindir }}/ipxe.pxe /workdir/bin/${{ matrix.arch }}-ipxe.pxe
           cp ${{ env.bindir }}/ipxe.usb /workdir/bin/${{ matrix.arch }}-ipxe.usb
           cp ${{ env.bindir }}/undionly.kpxe /workdir/bin/${{ matrix.arch }}-undionly.kpxe
+          cp ${{ inputs.autoexec_path }} /workdir/bin/${{ matrix.arch }}-${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
