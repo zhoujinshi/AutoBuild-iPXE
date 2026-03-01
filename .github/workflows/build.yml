@@ -62,21 +62,18 @@ jobs:
       - name: 准备 autoexec.ipxe
         working-directory: /workdir/autoexec-config
         run: |
-          cd /workdir/ipxe-source
+          ls -la /workdir/ipxe-source
           echo "当前工作目录: $(pwd)"
           ls -la
-          cd /workdir/autoexec-config
-          echo "当前工作目录: $(pwd)"
-          ls -la
-          echo "尝试访问文件: /workdir/autoexec-config/${{ inputs.autoexec_path }}"
+          echo "尝试访问文件: ${{ inputs.autoexec_path }}"
           
-          if [ -f "/workdir/autoexec-config/${{ inputs.autoexec_path }}" ]; then
+          if [ -f "${{ inputs.autoexec_path }}" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
-            cp "/workdir/autoexec-config/${{ inputs.autoexec_path }}" /workdir/ipxe-source/src/${{ inputs.autoexec_path }}
+            cp "${{ inputs.autoexec_path }}" /workdir/ipxe-source/src/${{ inputs.autoexec_path }}
             echo "复制完成，验证目标文件:"
             ls -la /workdir/ipxe-source/src/${{ inputs.autoexec_path }}
           else
-            echo "错误: 未找到 autoexec.ipxe 在 '/workdir/autoexec-config/${{ inputs.autoexec_path }}'"
+            echo "错误: 未找到 '${{ inputs.autoexec_path }}'"
             exit 1
           fi
 
