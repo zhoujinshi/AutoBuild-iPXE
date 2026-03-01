@@ -50,7 +50,7 @@ jobs:
         with:
           path: ipxe-source
           repository: ipxe/ipxe
-          ref: acstest
+          ref: utf8
           fetch-depth: 0
 
       - name: 复制代码到工作目录
@@ -86,8 +86,11 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           
-          # 开启CONSOLE_CMD命令
+          # 开启命令
           sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
+          sed -i 's/\/\/#define\ REBOOT_CMD/#define\ REBOOT_CMD/' config/general.h
+          sed -i 's/\/\/#define\ POWEROFF_CMD/#define\ POWEROFF_CMD/' config/general.h
+          sed -i 's/\/\/#define\ PARAM_CMD/#define\ PARAM_CMD/' config/general.h
           
           # 开始编译
           make ${{ env.bindir }}/ipxe.dsk \
