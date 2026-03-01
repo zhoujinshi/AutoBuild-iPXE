@@ -76,17 +76,26 @@ jobs:
             exit 1
           fi
 
+          
+          if [ -f "ca.crt" ]; then
+            echo "找到文件，正在复制到 iPXE 源码目录..."
+            cp "ca.crt" /workdir/ipxe-source/src/ca.crt
+            echo "复制完成，验证目标文件:"
+            ls -la /workdir/ipxe-source/src/ca.crt
+          else
+            echo "错误: 未找到 'ca.crt'"
+            exit 1
+          fi
+
       - name: 构建 iPXE
         working-directory: /workdir/ipxe-source/src
         run: |
           echo "当前工作目录: $(pwd)"
           make clean
           
-          # 开启命令
-          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
-          sed -i 's/\/\/#define\ REBOOT_CMD/#define\ REBOOT_CMD/' config/general.h
-          sed -i 's/\/\/#define\ POWEROFF_CMD/#define\ POWEROFF_CMD/' config/general.h
-          sed -i 's/\/\/#define\ PARAM_CMD/#define\ PARAM_CMD/' config/general.h
+          # 复制本地配置文件
+          mkdir -p config/local
+          cp -f /workdir/autoexec-config/local/* config/local/
           
           # 开始编译
           make ${{ env.bindir }}/ipxe.dsk \
@@ -96,6 +105,7 @@ jobs:
                ${{ env.bindir }}/ipxe.usb \
                ${{ env.bindir }}/undionly.kpxe \
                ${{ env.bindir }}/errors \
+               TRUST=ca.crt \
                EMBED=${{ inputs.autoexec_path }}
           cp ${{ env.bindir }}/ipxe.dsk /workdir/bin/${{ matrix.arch }}-ipxe.dsk
           cp ${{ env.bindir }}/ipxe.iso /workdir/bin/${{ matrix.arch }}-ipxe.iso
