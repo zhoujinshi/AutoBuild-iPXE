@@ -31,11 +31,10 @@ jobs:
       - name: 创建工作目录
         working-directory: /
         run: |
-          sudo mkdir -p /workdir
-          sudo chown $USER:$GROUPS /workdir
-          sudo mkdir -p /workdir/bin
-          sudo chown $USER:$GROUPS /workdir/bin
-          ls -la /
+          mkdir -p /workdir
+          chown $USER:$GROUPS /workdir
+          mkdir -p /workdir/bin
+          chown $USER:$GROUPS /workdir/bin
 
       - name: 检出 autoexec.ipxe
         uses: actions/checkout@v4
