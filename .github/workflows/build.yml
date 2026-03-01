@@ -49,8 +49,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ipxe-source
-          repository: netbootxyz/ipxe
-          ref: master
+          repository: qianjunakasumi/ipxe
+          ref: tachi
           fetch-depth: 0
 
       - name: 复制代码到工作目录
@@ -98,17 +98,13 @@ jobs:
                ${{ env.bindir }}/ipxe.pxe \
                ${{ env.bindir }}/ipxe.usb \
                ${{ env.bindir }}/undionly.kpxe \
-               ${{ env.bindir }}/errors \
-               EMBED=${{ inputs.autoexec_path }}
-          cp ${{ env.bindir }}/10ec8139.rom /workdir/bin/${{ matrix.arch }}-10ec8139.rom
-          cp ${{ env.bindir }}/8086100e.mrom /workdir/bin/${{ matrix.arch }}-8086100e.mrom
+               ${{ env.bindir }}/errors
           cp ${{ env.bindir }}/ipxe.dsk /workdir/bin/${{ matrix.arch }}-ipxe.dsk
           cp ${{ env.bindir }}/ipxe.iso /workdir/bin/${{ matrix.arch }}-ipxe.iso
           cp ${{ env.bindir }}/ipxe.lkrn /workdir/bin/${{ matrix.arch }}-ipxe.lkrn
           cp ${{ env.bindir }}/ipxe.pxe /workdir/bin/${{ matrix.arch }}-ipxe.pxe
           cp ${{ env.bindir }}/ipxe.usb /workdir/bin/${{ matrix.arch }}-ipxe.usb
           cp ${{ env.bindir }}/undionly.kpxe /workdir/bin/${{ matrix.arch }}-undionly.kpxe
-          cp ${{ inputs.autoexec_path }} /workdir/bin/${{ matrix.arch }}-${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
