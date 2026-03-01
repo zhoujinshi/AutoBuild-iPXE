@@ -44,9 +44,9 @@
 
 目前工作流默认只构建 x86_64 架构的固件，如果需要构建其他架构，可以修改工作流文件中的 `matrix` 配置。
 
-## 示例 `autoexec.ipxe`
+## 示例 `menu.ipxe`
 
-以下是一个简单的 `autoexec.ipxe` 示例：
+以下是一个简单的 `menu.ipxe` 示例：
 
 ```ipxe
 #!ipxe
@@ -92,3 +92,12 @@ echo 启动完成！
 
 - [官方 iPXE 项目](https://github.com/ipxe/ipxe)
 - [iPXE 文档](https://ipxe.org/docs)
+
+## 项目资源
+
+项目包含以下资源目录：
+
+- `img/`：存放项目相关图片资源
+  - `pic.png`：项目图片
+
+![项目图片](img/pic.png)
