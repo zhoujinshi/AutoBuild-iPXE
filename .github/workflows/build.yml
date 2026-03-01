@@ -86,6 +86,9 @@ jobs:
           echo "当前工作目录: $(pwd)"
           make clean
           
+          # 开启CONSOLE_CMD命令
+          sed -i 's/\/\/#define\ CONSOLE_CMD/#define\ CONSOLE_CMD/' config/general.h
+          
           # 开始编译
           make ${{ env.bindir }}/10ec8139.rom \
                ${{ env.bindir }}/8086100e.mrom \
