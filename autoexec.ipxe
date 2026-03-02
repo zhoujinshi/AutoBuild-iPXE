@@ -6,7 +6,7 @@ set fg_gre ${esc:string}[32m
 set fg_cya ${esc:string}[36m
 set fg_whi ${esc:string}[37m
 set site_name Cnbbx inc.
-set version V26.03
+set version 3.X
 set tftp-server ${next-server}
 set boot_domain ${next-server}
 
