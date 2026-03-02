@@ -62,9 +62,9 @@
 - `ca.crt`：证书文件
 - `README.md`：项目说明文档
 
-## 示例 `autoexec.ipxe`
+## 示例 `menu.ipxe`
 
-以下是一个简单的 `autoexec.ipxe` 示例：
+以下是一个简单的 `menu.ipxe` 示例：
 
 ```ipxe
 #!ipxe
@@ -105,6 +105,22 @@ echo 启动完成！
 - 确保 `autoexec.ipxe` 和 `ca.crt` 文件存在于项目根目录，否则构建会失败
 - 构建过程可能需要几分钟时间，请耐心等待
 - 如果构建失败，请检查工作流日志以了解详细错误信息
+
+## autoexec.ipxe 加载顺序
+
+当 iPXE 固件启动时，它会执行内置的 `autoexec.ipxe` 脚本（本项目构建的固件会包含自定义的 `autoexec.ipxe`）。该脚本的执行流程如下：
+
+1. **初始化**：设置环境变量和显示欢迎信息
+2. **网络配置**：尝试通过 DHCP 获取网络配置
+3. **自定义配置加载**：按照以下顺序尝试加载配置文件：
+   - 基于主机名的配置：`tftp://${tftp-server}/HOSTNAME-${hostname}.ipxe`
+   - 基于 MAC 地址的配置（十六进制原始格式）：`tftp://${tftp-server}/MAC-${mac:hexraw}.ipxe`
+   - 基于 MAC 地址的配置（带连字符格式）：`tftp://${tftp-server}/MAC-${mac:hexhyp}.ipxe`
+4. **默认菜单加载**：如果自定义配置不存在，尝试加载默认菜单：
+   - TFTP 方式：`tftp://${tftp-server}/menu.ipxe`
+   - HTTP/HTTPS 方式：`http://${boot_domain}/menu.php?mac=${mac:hexraw}` 或 `https://${boot_domain}/menu.php?mac=${mac:hexraw}`
+   - HTTP/HTTPS 方式（备用）：`http://${boot_domain}/menu.ipxe` 或 `https://${boot_domain}/menu.ipxe`
+5. **错误处理**：如果所有加载尝试都失败，显示错误菜单，提供重启或退出选项
 
 ## 相关链接
 

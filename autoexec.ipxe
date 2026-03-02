@@ -1,4 +1,79 @@
 #!ipxe
-dhcp
-chain --autofree http://${next-server}/menu.ipxe || chain --autofree tftp://${next-server}/menu.ipxe
+set esc:hex 1b
+set bold ${esc:string}[1m
+set boldoff ${esc:string}[22m
+set fg_gre ${esc:string}[32m
+set fg_cya ${esc:string}[36m
+set fg_whi ${esc:string}[37m
+set site_name Cnbbx inc.
+set version V26.03
+set tftp-server ${next-server}
+set boot_domain ${next-server}
 
+:start
+    echo ${bold}${fg_gre}${site_name} - ${fg_whi}v${version}${boldoff}
+    goto dhcp
+
+:dhcp
+    echo Attempting DHCP...
+    dhcp || goto error-dhcp
+    goto load-ipxe
+
+:error-dhcp
+    echo DHCP failed. Please check network cable and DHCP server.
+    menu Network Configuration Error
+      item retry_dhcp Retry DHCP
+      item manual_config Manually configure network
+      item exit_boot Exit iPXE and continue BIOS boot
+      choose selected_err
+      goto ${selected_err}
+
+:retry_dhcp
+    echo Retrying DHCP...
+    imgfree
+    goto dhcp
+
+:manual_config
+    echo Network Configuration:
+    echo Available interfaces...
+    ifstat
+    imgfree
+    echo -n Set network interface number [0 for net0, defaults to 0]: && read net
+    isset ${net} || set net 0
+    echo -n IP address: && read net${net}/ip
+    echo -n Subnet mask: && read net${net}/netmask
+    echo -n Gateway: && read net${net}/gateway
+    echo -n DNS server: && read dns
+    ifopen net${net}
+    echo Network configured. Attempting to load boot file...
+    goto load-ipxe
+
+:load-ipxe
+    # Try custom configs first
+    isset ${hostname} && chain --autofree tftp://${tftp-server}/HOSTNAME-${hostname}.ipxe || echo Custom boot by Hostname not found.
+    chain --autofree tftp://${tftp-server}/MAC-${mac:hexraw}.ipxe || echo Custom boot by MAC (hexraw) not found.
+    chain --autofree tftp://${tftp-server}/MAC-${mac:hexhyp}.ipxe || echo Custom boot by MAC (hexhyp) not found.
+
+    # If custom configs fail, try default menu
+    echo Attempting to load default menu.ipxe...
+    chain --autofree tftp://${tftp-server}/menu.ipxe || goto load-net-ipxe
+
+:load-net-ipxe
+    chain --autofree http://${boot_domain}/menu.php?mac=${mac:hexraw} || chain --autofree https://${boot_domain}/menu.php?mac=${mac:hexraw}  || goto load-net
+
+:load-net
+    chain --autofree http://${boot_domain}/menu.ipxe || chain --autofree https://${boot_domain}/menu.ipxe  || goto final-error
+
+:final-error
+    echo Neither TFTP nor HTTP menu.ipxe could be loaded.
+    menu Critical Boot Error
+      item reboot_now Reboot now
+      item exit_now Exit iPXE and continue BIOS boot
+      choose selected_crit
+      goto ${selected_crit}
+
+:reboot_now
+    reboot
+
+:exit_now
+    exit
