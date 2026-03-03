@@ -254,8 +254,8 @@ jobs:
         run: |
           echo "当前工作目录: $(pwd)"
           ls -la
-          ls -la ./src || echo 找不到./src
-          ls -la ./src/util || echo 找不到./src/util
+          ls -la ./ipxe-source/src || echo 找不到./ipxe-source/src
+          ls -la ./ipxe-source/src/util || echo 找不到./ipxe-source/src/util
           ls -la ./ipxe-i386-pcbios || echo 找不到./ipxe-i386-pcbios
           ls -la ./ipxe-x86_64-pcbios || echo 找不到./ipxe-x86_64-pcbios
           ls -la ./ipxe-i386-efi || echo 找不到./ipxe-i386-efi
@@ -270,8 +270,8 @@ jobs:
               && shell || autoboot
           EOF
           for DRIVERS in ipxe; do
-              ./src/util/genfsimg -o ${DRIVERS}-multiarch.iso ${{ env.fsbinaries }}
-              ./src/util/genfsimg -o ${DRIVERS}-multiarch.img -s autoexec.ipxe \
+              ./ipxe-source/src/util/genfsimg -o ${DRIVERS}-multiarch.iso ${{ env.fsbinaries }}
+              ./ipxe-source/src/util/genfsimg -o ${DRIVERS}-multiarch.img -s autoexec.ipxe \
               ${{ env.fsbinaries }}
           done
           
