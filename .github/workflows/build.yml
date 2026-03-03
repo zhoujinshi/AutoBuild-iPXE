@@ -237,15 +237,20 @@ jobs:
         ipxe-i386-efi/i386-efi-${DRIVERS}.efi
         ipxe-x86_64-efi/x86_64-efi-${DRIVERS}.efi
     steps:
-      - name: Check out code
-        uses: actions/checkout@v6
+      - name: 检出 iPXE 源码
+        uses: actions/checkout@v4
+        with:
+          path: ipxe-source
+          repository: ipxe/ipxe
+          ref: master
+          fetch-depth: 0
 
-      - name: Download
+      - name: 下载构建产物
         uses: actions/download-artifact@v7
         with:
           pattern: "{ipxe-i386-pcbios,ipxe-x86_64-pcbios,ipxe-i386-efi,ipxe-x86_64-efi}"
 
-      - name: ISO + USB
+      - name: 生成 ISO + USB
         run: |
           # Provide an editable placeholder autoexec.ipxe for the USB image
           cat > autoexec.ipxe <<'EOF'
@@ -261,7 +266,7 @@ jobs:
               ${{ env.fsbinaries }}
           done
           
-      - name: Upload
+      - name: 上传 ISO + USB 格式文件
         uses: actions/upload-artifact@v6
         with:
           name: ipxe-combi-multiarch
