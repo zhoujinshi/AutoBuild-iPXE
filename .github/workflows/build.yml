@@ -195,9 +195,7 @@ jobs:
       - name: 构建 iPXE
         working-directory: /workdir/ipxe-source/src
         run: |
-          dnf install -y openssl || echo "openssl 安装失败"
-          dnf install -y openssl-libs || echo "openssl-libs 安装失败"
-          dnf install -y openssl-devel || echo "openssl-devel 安装失败"
+          dnf install -y openssl openssl-libs openssl-devel || echo "openssl 安装失败"
 
           echo "当前工作目录: $(pwd)"
           make clean
@@ -205,6 +203,7 @@ jobs:
           # 复制本地配置文件
           mkdir -p config/local
           cp -f /workdir/autoexec-config/local/* config/local/
+          cp -f /workdir/autoexec-config/local/general.h.efi config/local/general.h
           
           # 开始编译
           make ${{ env.bindir }}/ipxe.efi \
