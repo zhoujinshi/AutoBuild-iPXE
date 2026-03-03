@@ -7,8 +7,6 @@ set fg_cya ${esc:string}[36m
 set fg_whi ${esc:string}[37m
 set site_name Cnbbx inc.
 set version 3.x
-set tftp-server ${next-server}
-set boot_domain ${next-server}
 
 :start
     echo ${bold}${fg_gre}${site_name} ${fg_whi}v${version}${boldoff}
@@ -51,27 +49,31 @@ set boot_domain ${next-server}
 
 :load-ipxe
     # Try custom configs first
-    isset ${hostname} && chain --autofree tftp://${tftp-server}/HOSTNAME-${hostname}.ipxe || echo Custom boot by Hostname not found.
-    chain --autofree tftp://${tftp-server}/MAC-${mac:hexraw}.ipxe || echo Custom boot by MAC (hexraw) not found.
-    chain --autofree tftp://${tftp-server}/MAC-${mac:hexhyp}.ipxe || echo Custom boot by MAC (hexhyp) not found.
+    isset ${hostname} && chain --autofree /HOSTNAME-${hostname}.ipxe || echo Custom boot by Hostname not found.
+    chain --autofree /MAC-${mac:hexraw}.ipxe || echo Custom boot by MAC (hexraw) not found.
+    chain --autofree /MAC-${mac:hexhyp}.ipxe || echo Custom boot by MAC (hexhyp) not found.
 
     # If custom configs fail, try default menu
     echo Attempting to load default menu.ipxe...
-    chain --autofree tftp://${tftp-server}/menu.ipxe || goto load-net-ipxe
+    chain --autofree /menu.ipxe || goto load-net-ipxe
 
 :load-net-ipxe
-    chain --autofree http://${boot_domain}/menu.php?mac=${mac:hexraw} || chain --autofree https://${boot_domain}/menu.php?mac=${mac:hexraw}  || goto load-net
+    chain --autofree http://${next-server}/menu.php?mac=${mac:hexraw} || chain --autofree https://${next-server}/menu.php?mac=${mac:hexraw}  || goto load-net
 
 :load-net
-    chain --autofree http://${boot_domain}/menu.ipxe || chain --autofree https://${boot_domain}/menu.ipxe  || goto final-error
+    chain --autofree http://${next-server}/menu.ipxe || chain --autofree https://${next-server}/menu.ipxe  || goto final-error
 
 :final-error
     echo Neither TFTP nor HTTP menu.ipxe could be loaded.
     menu Critical Boot Error
       item reboot_now Reboot now
+      item link_online Link Online
       item exit_now Exit iPXE and continue BIOS boot
       choose selected_crit
       goto ${selected_crit}
+
+:link_online
+    chain --autofree http://cnbbx.com/ipxe/menu.ipxe || goto final-error
 
 :reboot_now
     reboot
