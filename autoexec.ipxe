@@ -6,12 +6,13 @@ set fg_gre ${esc:string}[32m
 set fg_cya ${esc:string}[36m
 set fg_whi ${esc:string}[37m
 set site_name Cnbbx inc.
-set version 3.X
+set version 3.x
 set tftp-server ${next-server}
 set boot_domain ${next-server}
 
 :start
-    echo ${bold}${fg_gre}${site_name} - ${fg_whi}v${version}${boldoff}
+    echo ${bold}${fg_gre}${site_name} ${fg_whi}v${version}${boldoff}
+    echo 
     goto dhcp
 
 :dhcp
