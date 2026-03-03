@@ -228,7 +228,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [bios, uefi]
     container:
-      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.arch }}
+      image: ghcr.io/ipxe/ipxe-builder-utils
       options: --user root
     env:
       fsbinaries: >-
