@@ -261,7 +261,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v6
         with:
-          name: bin-combi
+          name: combi-multiarch
           path: |
             ipxe-multiarch.iso
             ipxe-multiarch.img
