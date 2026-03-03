@@ -129,7 +129,7 @@ jobs:
           - i386
           - x86_64
     container:
-      image: ghcr.io/netbootxyz/builder:latest
+      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.arch }}
       options: --user root
     env:
       bindir: bin-${{ matrix.arch }}-efi
@@ -225,7 +225,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [bios, uefi]
     container:
-      image: ghcr.io/netbootxyz/builder:latest
+      image: ghcr.io/ipxe/ipxe-builder-${{ matrix.arch }}
       options: --user root
     env:
       fsbinaries: >-
@@ -261,7 +261,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v6
         with:
-          name: combi-multiarch
+          name: ipxe-combi-multiarch
           path: |
             ipxe-multiarch.iso
             ipxe-multiarch.img
@@ -269,7 +269,7 @@ jobs:
   cleanup:
     name: 清理老的构建记录
     runs-on: ubuntu-latest
-    needs: [bios, uefi, iso-usb]
+    needs: [iso-usb]
     steps:
       - name: 生成 release tag
         id: tag
