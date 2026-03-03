@@ -203,14 +203,14 @@ jobs:
           cp -f /workdir/autoexec-config/local/* config/local/
           
           # 开始编译
-          make ${{ env.bindir }}/${{ matrix.arch }}-efi-ipxe.efi \
-               ${{ env.bindir }}/${{ matrix.arch }}-efi-ipxe.iso \
-               ${{ env.bindir }}/${{ matrix.arch }}-efi-snponly.efi \
+          make ${{ env.bindir }}/ipxe.efi \
+               ${{ env.bindir }}/ipxe.iso \
+               ${{ env.bindir }}/snponly.efi \
                TRUST=ca.crt \
                EMBED=${{ inputs.autoexec_path }}
-          cp ${{ env.bindir }}/${{ matrix.arch }}-efi-ipxe.efi /workdir/bin/${{ matrix.arch }}-efi-ipxe.efi
-          cp ${{ env.bindir }}/${{ matrix.arch }}-efi-ipxe.iso /workdir/bin/${{ matrix.arch }}-efi-ipxe.iso
-          cp ${{ env.bindir }}/${{ matrix.arch }}-efi-snponly.efi /workdir/bin/${{ matrix.arch }}-efi-snponly.efi
+          cp ${{ env.bindir }}/ipxe.efi /workdir/bin/${{ matrix.arch }}-efi-ipxe.efi
+          cp ${{ env.bindir }}/ipxe.iso /workdir/bin/${{ matrix.arch }}-efi-ipxe.iso
+          cp ${{ env.bindir }}/snponly.efi /workdir/bin/${{ matrix.arch }}-efi-snponly.efi
           cp ${{ inputs.autoexec_path }} /workdir/bin/${{ matrix.arch }}-efi-${{ inputs.autoexec_path }}
 
       - name: 上传构建产物
