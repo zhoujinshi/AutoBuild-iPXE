@@ -195,6 +195,9 @@ jobs:
       - name: 构建 iPXE
         working-directory: /workdir/ipxe-source/src
         run: |
+          apt install openssl
+          openssl version
+
           echo "当前工作目录: $(pwd)"
           make clean
           
