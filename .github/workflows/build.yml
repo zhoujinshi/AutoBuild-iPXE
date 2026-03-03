@@ -182,7 +182,6 @@ jobs:
             exit 1
           fi
 
-          
           if [ -f "ca.crt" ]; then
             echo "找到文件，正在复制到 iPXE 源码目录..."
             cp "ca.crt" /workdir/ipxe-source/src/ca.crt
@@ -230,9 +229,10 @@ jobs:
       options: --user root
     env:
       fsbinaries: >-
-        ipxe-x86_64-pcbios/${DRIVERS}.lkrn
-        ipxe-i386-efi/${DRIVERS}.efi
-        ipxe-x86_64-efi/${DRIVERS}.efi
+        ipxe-i386-pcbios/i386-${DRIVERS}.lkrn
+        ipxe-x86_64-pcbios/x86_64-${DRIVERS}.lkrn
+        ipxe-i386-efi/i386-efi-${DRIVERS}.efi
+        ipxe-x86_64-efi/x86_64-efi-${DRIVERS}.efi
     steps:
       - name: Check out code
         uses: actions/checkout@v6
@@ -240,7 +240,7 @@ jobs:
       - name: Download
         uses: actions/download-artifact@v7
         with:
-          pattern: "{ipxe-x86_64-pcbios,ipxe-i386-efi,ipxe-x86_64-efi}"
+          pattern: "{ipxe-i386-pcbios,ipxe-x86_64-pcbios,ipxe-i386-efi,ipxe-x86_64-efi}"
 
       - name: ISO + USB
         run: |
@@ -253,8 +253,8 @@ jobs:
               && shell || autoboot
           EOF
           for DRIVERS in ipxe; do
-              ./src/util/genfsimg -o ${DRIVERS}.iso ${{ env.fsbinaries }}
-              ./src/util/genfsimg -o ${DRIVERS}.img -s autoexec.ipxe \
+              ./src/util/genfsimg -o ${DRIVERS}-multiarch.iso ${{ env.fsbinaries }}
+              ./src/util/genfsimg -o ${DRIVERS}-multiarch.img -s autoexec.ipxe \
               ${{ env.fsbinaries }}
           done
           
@@ -263,8 +263,8 @@ jobs:
         with:
           name: bin-combi
           path: |
-            ipxe.iso
-            ipxe.img
+            ipxe-multiarch.iso
+            ipxe-multiarch.img
 
   cleanup:
     name: 清理老的构建记录
