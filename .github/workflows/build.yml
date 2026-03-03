@@ -252,6 +252,15 @@ jobs:
 
       - name: 生成 ISO + USB
         run: |
+          echo "当前工作目录: $(pwd)"
+          ls -la
+          ls -la ./src || echo 找不到./src
+          ls -la ./src/util || echo 找不到./src/util
+          ls -la ./ipxe-i386-pcbios || echo 找不到./ipxe-i386-pcbios
+          ls -la ./ipxe-x86_64-pcbios || echo 找不到./ipxe-x86_64-pcbios
+          ls -la ./ipxe-i386-efi || echo 找不到./ipxe-i386-efi
+          ls -la ./ipxe-x86_64-efi || echo 找不到./ipxe-x86_64-efi
+
           # Provide an editable placeholder autoexec.ipxe for the USB image
           cat > autoexec.ipxe <<'EOF'
           #!ipxe
