@@ -302,8 +302,9 @@ jobs:
           cat release.txt
 
       - name: 移除老的 workflow runs
-        uses: zhoujinshi/delete-workflow-runs@main
+        uses: Mattraks/delete-workflow-runs@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           retain_days: 0
           keep_minimum_runs: 3
 
